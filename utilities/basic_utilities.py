@@ -18,11 +18,10 @@ def sort_vars(df, varlist):
         if df[v].dtype in (int, float, bool):
             numeric_vars.append(v)
         elif df[v].dtype == object:
-            str_var.append(v)
+            str_vars.append(v)
         else:
             oth_vars.append(v)
     return numeric_vars, str_vars, oth_vars
-
 
 
 
@@ -39,7 +38,6 @@ def precision_and_scale(x):
         frac_digits /= 10
     scale = int(math.log10(frac_digits))
     return (magnitude, scale)
-
 
 
 
@@ -81,20 +79,22 @@ def binning_c(df, var_bins):
     return df1, cutpoints
 
 
-def proc_means(df, vars):
-    df1 = df[vars].describe(percentiles=[.01, .05, .1, .25, .5, .75, .9, .95, .99]).reset_index()
+def proc_means(df, myvars):
+    df1 = df[myvars].describe(percentiles=[.01, .05, .1, .25, .5, .75, .9, .95, .99]).reset_index()
     df1 = df1.rename(columns={'index':'Statistics'})
     row = pd.DataFrame(columns = df1.columns.to_list())
     
     row.loc[0, 'Statistics'] = 'missing_count'
-    for var in vars:
-        row.loc[0, var] = df[var].isna().sum()
-    df1 = df1.append(row, ignore_index = True)
+    for var in myvars:
+        row.loc[0, var] = df1[var].isna().sum()
+    
+    df1 = pd.concat([df1,row], ignore_index=True)
     
     row.loc[0,'Statistics'] = 'missing_pct'
-    for var in vars:
-        row.loc[0,var] = df[var].isna().sum()/df1.loc[df1['Statistics']=='count', var][0]*100
-    df1 = df1.append(row, ignore_index=True)
+    for var in myvars:
+        row.loc[0,var] = df1[var].isna().sum()/df1.loc[df1['Statistics']=='count', var][0]*100
+    
+    df1 = pd.concat([df1, row], ignore_index=True)
     
     df1['Statistics'] = df1['Statistics'].astype('str')
     return df1
