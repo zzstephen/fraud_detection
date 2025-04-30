@@ -113,7 +113,9 @@ class sk_feature_selection:
         
     @staticmethod    
     def f_low_variation(df, varlist, thres):
+        
         var_std = pd.DataFrame(columns = ['feature','rescaled_std','recommendation','outliers'])
+
         for v in varlist:
 
             v_o_range = df[v].max() - df[v].min()
@@ -132,7 +134,11 @@ class sk_feature_selection:
                 outlier = False
 
             row_df = pd.DataFrame([{'feature':v, 'rescaled_std':re_std, 'recommendation':('keep' if re_std>thres else 'drop'), 'outliers':outlier}])
-            var_std = pd.concat([var_std, row_df], ignore_index=True)
+
+            if var_std.empty:
+                var_std = row_df
+            else:
+                var_std = pd.concat([var_std, row_df], ignore_index=True)
             
             var_std = var_std.sort_values(by=['rescaled_std'], ascending=False).reset_index(drop=True)
         
