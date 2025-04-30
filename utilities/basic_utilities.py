@@ -100,17 +100,20 @@ def proc_means(df, myvars):
     return df1
 
 
+
 def proc_freq(df, vars):
     df_list = list()
     df0 = df.copy(deep=True)
     df0[vars] = df0[vars].astype('category')
     for var in vars:
-        df1 = df0.groupby(var)[var].count()
+        df1 = df0.groupby(var, observed=False)[var].count()
         df1 = pd.DataFrame(df1).rename(columns={var:'Frequency'}).reset_index()
 
         r_data = [['missing', df[var].isna().sum()]]
         row = pd.DataFrame(r_data, columns=[var,'Frequency'])
-        df1 = df1.append(row, ignore_index=True)
+        # df1 = df1.append(row, ignore_index=True)
+        df1 = pd.concat([df1, row], ignore_index=True)
+
         total = df.shape[0]
         df1['Percent'] = df1['Frequency']/total*100
         df1['Cum Frequency'] = df1['Frequency'].cumsum()
@@ -119,14 +122,17 @@ def proc_freq(df, vars):
     return df_list
 
 
+
 def catsum_val(df, vars, val, desc_val):
     df_list = list()
     for var in vars:
-        df1 = df.loc[df[var].notna()==True, :].groupby(var)[val].sum()
+        df1 = df.loc[df[var].notna()==True, :].groupby(var, observed=False)[val].sum()
         df1 = pd.DataFrame(df1).rename(columns={val:"{}".format(desc_val)}).reset_index()
         r_data = [['missing', df.loc[df[var].isna()==True, val].sum()]]
         row = pd.DataFrame(r_data, columns=[var,"{}".format(desc_val)])
-        df1 = df1.append(row, ignore_index=True)
+        # df1 = df1.append(row, ignore_index=True)
+        df1 = pd.concat([df1, row], ignore_index = True)
+        
         total = df[val].sum()
         df1["{} Pct".format(desc_val)] = df1['{}'.format(desc_val)]/total*100
         df1["Cum {}".format(desc_val)] = df1["{}".format(dscc_val)].cumsum()
@@ -140,18 +146,22 @@ def cat_wt_avg(df, byvars, wt, val, desc_val):
     df_list = list()
     df['wt_sum'] = df[wt]*df[val]
     for var in byvars:
-        df1 = df.loc[df[var].notna()==True, :].groupby(var)[wt].sum()
-        df2 = df.loc[df[var].notna()==True, :].groupby(var)['wt_sum'].sum()
+        df1 = df.loc[df[var].notna()==True, :].groupby(var, observed=False)[wt].sum()
+        df2 = df.loc[df[var].notna()==True, :].groupby(var, observed=False)['wt_sum'].sum()
         df1 = pd.DataFrame(df1).reset_index()
         df2 = pd.DataFrame(df2).rename(columns={'wt_sum':'Wted sum of {}'.format(desc_val)}).reset_index()
         
         r_data1 = [['missing', df.loc[df[var].isna() == True, wt].sum()]]
         r_data2 = [['missing', df.loc[df[var].isna() == True, 'wt_sum'].sum()]]
         row1 = pd.DataFrame(r_data1, columns=[var, wt])
-        df1 = df1.append(row1, ignore_index=True)
+        # df1 = df1.append(row1, ignore_index=True)
+        df1 = pd.concat([df1, row1], ignore_index=True)
+        
         row2 = pd.DataFrame(r_data2, columns=[var, 'Wted sum of {}'.format(desc_val)])
                 
-        df2 = df2.append(row2, ignore_index=True)
+        # df2 = df2.append(row2, ignore_index=True)
+        df2 = pd.concat([df2, row2], ignore_index=True)
+        
         df1 = df1.merge(df2, on=var)
         total = df[wt].sum()
         df1["{} Pct".format(wt)] = df1["{}".format(wt)]/total*100
