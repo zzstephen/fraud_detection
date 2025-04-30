@@ -7,8 +7,6 @@ import pdb
 
 
 
-
-
 def sort_vars(df, varlist):
     numeric_vars = []
     str_vars = []
@@ -143,7 +141,7 @@ def catsum_val(df, vars, val, desc_val):
 
 
 def cat_wt_avg(df, byvars, wt, val, desc_val):
-    df_list = list()
+    df_list = pd.DataFrame()
     df['wt_sum'] = df[wt]*df[val]
     for var in byvars:
         df1 = df.loc[df[var].notna()==True, :].groupby(var, observed=False)[wt].sum()
@@ -171,7 +169,8 @@ def cat_wt_avg(df, byvars, wt, val, desc_val):
         df1 = df1[[var, wt, "{} Pct".format(wt), "Weighted {}".format(val), "Wted sum of {}".format(desc_val)]]
         df1 = df1.sort_values(by=["Weighted {}".format(val)], ascending=False)
         
-        df_list.append(df1)
+        df_list = pd.concat([df_list, df1])
+        
     df = df.drop('wt_sum', axis=1)
     return df_list
 
@@ -188,9 +187,12 @@ def write_tbles(dflist, writer, sheetname, start_row, start_col):
 
 
 def pivot(df, varlist, by_var):
+    
     df_grp = df.groupby(by_var)[df.columns[0]].count().reset_index()
     df_grp = df_grp.rename(columns={df.columns[0]:'count'})
 
+    
+    
     for k in varlist.keys():
         
         pair = varlist[k]  
@@ -198,41 +200,42 @@ def pivot(df, varlist, by_var):
         if len(pair) == 2:
             agg = pair[0]
             weight = pair[1]
-            df1 = df[[by_var,k]].copy(deep=True)
-            if weight == '1':
-                df1[weight] = 1
+            df1 = df[[by_var,k, weight]].copy(deep=True)
+  
         else:
             agg = pair
             df1 = df[[by_var,k]].copy(deep=True)
-            
+    
         if agg == 'weighted_avg':
+            
             df1['wt'] = df1[weight]*df1[k]
-            grp1 = df1.groupby(by_var)['wt'].agg([np.sum]).reset_index()
-            grp2 = df1.groupby(by_var)[weight].agg([np.sum]).reset_index()
+            
+            grp1 = df1.groupby(by_var)['wt'].agg(['sum']).reset_index()
+            grp2 = df1.groupby(by_var)[weight].agg(['sum']).reset_index()
             grp2 = grp2.rename(columns={'sum':k})
             grp = grp1.merge(grp2, on=by_var)
             grp['WA_{}'.format(k)] = grp['sum']/grp[k]
             grp = grp[[by_var, 'WA_{}'.format(k)]]
         elif agg == 'sum':
-            grp = df1.groupby(by_var)[k].agg([np.sum]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['sum']).reset_index()
             grp = grp.rename(columns={'sum':'sum_{}'.format(k)})
         elif agg == 'mean':
-            grp = df1.groupby(by_var)[k].agg([np.mean]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['mean']).reset_index()
             grp = grp.rename(columns={'mean':'mean_{}'.format(k)})
         elif agg == 'min':
-            grp = df1.groupby(by_var)[k].agg([np.min]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['min']).reset_index()
             grp = grp.rename(columns={'min':'min_{}'.format(k)})
         elif agg == 'max':
-            grp = df1.groupby(by_var)[k].agg([np.max]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['max']).reset_index()
             grp = grp.rename(columns={'max':'max_{}'.format(k)})
         elif agg == 'median':
-            grp = df1.groupby(by_var)[k].agg([np.median]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['median']).reset_index()
             grp = grp.rename(columns={'median':'med_{}'.format(k)})
         elif agg == 'std':
-            grp = df1.groupby(by_var)[k].agg([np.std]).reset_index()
+            grp = df1.groupby(by_var)[k].agg(['std']).reset_index()
             grp = grp.rename(columns={'std':'std_{}'.format(k)})
         elif agg == 'logodds':
-            grp1 = df1.groupby(by_var)[k].agg([np.sum]).reset_index()
+            grp1 = df1.groupby(by_var)[k].agg(['sum']).reset_index()
             grp2 = df_grp[[by_var,'count']]
             grp  = grp1.merge(grp2, on=by_var)
             grp['ones'] = grp['sum']
