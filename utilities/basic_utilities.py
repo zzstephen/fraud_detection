@@ -98,6 +98,24 @@ def proc_means(df, myvars):
     return df1
 
 
+def cross_tab(df, var1, var2):
+
+    res_freq = pd.crosstab(df[var1],df[var2], dropna=False)
+
+    res_col_pct = res_freq.astype('float').copy()
+    res_row_pct = res_freq.astype('float').copy()
+
+    for i in range(res_freq.shape[0]):
+        res_col_pct.iloc[i,:] /= res_freq.sum(axis=1).values[i]
+        
+
+    for i in range(res_freq.shape[1]):
+        res_row_pct.iloc[:,i] /= res_freq.sum(axis=0).values[i]
+
+    return res_freq, res_row_pct, res_col_pct
+
+
+    
 
 def proc_freq(df, vars):
     df_list = list()
