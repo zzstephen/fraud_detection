@@ -48,9 +48,9 @@ def binning_q(df, var_bins):
             int_len, d_len = precision_and_scale(df1[k].values[0])
             if int_len >= 2:
                 
-                df1['{}_bin'.format(k)], cutpoints[k] = pd.qcut(df1[k], q=var_bins[k], retbins=True, precision=0)    
+                df1['{}_bin'.format(k)], cutpoints[k] = pd.qcut(df1[k], q=var_bins[k], retbins=True, precision=0, duplicates='drop')    
             else:
-                df1['{}_bin'.format(k)], cutpoints[k] = pd.qcut(df1[k], q=var_bins[k], retbins=True, precision=1+d_len) 
+                df1['{}_bin'.format(k)], cutpoints[k] = pd.qcut(df1[k], q=var_bins[k], retbins=True, precision=1+d_len, duplicates='drop') 
             
             df1['{}_bin'.format(k)] = df1['{}_bin'.format(k)].astype('str')
         else:

@@ -31,6 +31,11 @@ def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=
     
     fig = px.scatter(df1, x = 'x_var', y = 'y_var', color = color_var, facet_row=by_var1, facet_col=by_var2, trendline='ols', \
                      width=width*col_level, height=height*row_level , trendline_color_override="red")
+
+    fig.update_layout(
+    xaxis_title=x_var,
+    yaxis_title=y_var)
+
     fig.show()
     
     
