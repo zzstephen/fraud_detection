@@ -20,6 +20,7 @@ def sort_vars(df, varlist):
             str_vars.append(v)
         else:
             oth_vars.append(v)
+            
     return numeric_vars, str_vars, oth_vars
 
 
