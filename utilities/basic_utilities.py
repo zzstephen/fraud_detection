@@ -196,7 +196,10 @@ def cat_wt_avg(df, byvars, wt, val, desc_val):
 
 
 
-def write_tbles(dflist, writer, sheetname, start_row, start_col):
+def write_tbles(dflist, writer=None, sheetname='sheet1', start_row=2, start_col=2):
+    if writer == None:
+        writer = pd.ExcelWriter("output.xlsx") 
+        
     for df in dflist:
         df.to_excel(writer, index=False, sheet_name = sheetname, \
             startrow = start_row, startcol = start_col)
