@@ -17,8 +17,9 @@ import plotly.graph_objects as go
 from plotly.offline import iplot
 
 
+def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, width=400, height=300, show=True, title=None):
 
-def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, width=400, height=300):
+    #x_trans, y_trans are functions
     
     keep_var0 = [x_var, y_var, by_var1, by_var2, color_var]
     keep_var = [i for i in keep_var0 if i]
@@ -29,16 +30,22 @@ def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=
     
     row_level = len(df1[by_var1].unique()) if by_var1 != None else 1
     col_level = len(df1[by_var2].unique()) if by_var2 != None else 1
+
+    if title == None:
+        title = f"{x_var} vs {y_var}"
     
     fig = px.scatter(df1, x = 'x_var', y = 'y_var', color = color_var, facet_row=by_var1, facet_col=by_var2, trendline='ols', \
-                     width=width*col_level, height=height*row_level , trendline_color_override="red")
+                     width=width*col_level, height=height*row_level , trendline_color_override="red",
+                     title=title)
 
     fig.update_layout(
     xaxis_title=x_var,
     yaxis_title=y_var)
 
-    fig.show()
-    
+    if show:
+        fig.show()
+        
+    return fig
     
 def px_ecdf_plot(df, x_var, cat_var = None, by_var = None, width=600, height=450):
 
@@ -67,7 +74,7 @@ def px_bin_plot(df, x_bin_var, y_var, size_var, by_var = None, width=600, height
     
 def f_get_dummies(df, varlist, drop_first=True):
 
-    return pd.get_dummies(df,prefix=varlist, columns=varlist, drop_first=True, prefix_sepstr=':',dummy_na=True)
+    return pd.get_dummies(df,prefix=varlist, columns=varlist, drop_first=True, prefix_sep=':',dummy_na=True)
 
 
 def f_get_1d_knots(df, varlist, knots_list, overlap=False):
@@ -108,4 +115,5 @@ def px_scatter_3d_plot(df, x1_var, x2_var, y_var, width=800, height=600):
     layout = go.Layout(title = '3D scatter plot of {} by {}, {}'.format(y_var, x1_var, x2_var), width=width, height=height)
     fig = go.Figure(data = [trace], layout = layout)
     iplot(fig)
+
 
