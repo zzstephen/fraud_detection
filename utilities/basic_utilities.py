@@ -190,6 +190,7 @@ def cat_wt_avg(df, byvars, wt, val, desc_val):
         df1 = df1.sort_values(by=["Weighted {}".format(val)], ascending=False)
         
         df_list = pd.concat([df_list, df1])
+
         
     df = df.drop('wt_sum', axis=1)
     return df_list
@@ -209,12 +210,11 @@ def write_tbles(dflist, writer=None, sheetname='sheet1', start_row=2, start_col=
 
 
 
-def pivot(df, varlist, by_var):
+def pivot(df, varlist, by_vars):
     
-    df_grp = df.groupby(by_var)[df.columns[0]].count().reset_index()
+    df_grp = df.groupby(by_vars)[df.columns[0]].count().reset_index()
     df_grp = df_grp.rename(columns={df.columns[0]:'count'})
 
-    
     
     for k in varlist.keys():
         
@@ -223,48 +223,53 @@ def pivot(df, varlist, by_var):
         if len(pair) == 2:
             agg = pair[0]
             weight = pair[1]
-            df1 = df[[by_var,k, weight]].copy(deep=True)
+            temp = by_vars + [k, weight]
+            df1 = df[temp].copy(deep=True)
   
         else:
             agg = pair
-            df1 = df[[by_var,k]].copy(deep=True)
+            temp = by_vars + [k]
+            df1 = df[temp].copy(deep=True)
     
         if agg == 'weighted_avg':
             
             df1['wt'] = df1[weight]*df1[k]
             
-            grp1 = df1.groupby(by_var)['wt'].agg(['sum']).reset_index()
-            grp2 = df1.groupby(by_var)[weight].agg(['sum']).reset_index()
+            grp1 = df1.groupby(by_vars)['wt'].agg(['sum']).reset_index()
+            grp2 = df1.groupby(by_vars)[weight].agg(['sum']).reset_index()
             grp2 = grp2.rename(columns={'sum':k})
-            grp = grp1.merge(grp2, on=by_var)
+            grp = grp1.merge(grp2, on=by_vars)
             grp['WA_{}'.format(k)] = grp['sum']/grp[k]
-            grp = grp[[by_var, 'WA_{}'.format(k)]]
+            temp = by_vars + ['WA_{}'.format(k)]
+            grp = grp[temp]
         elif agg == 'sum':
-            grp = df1.groupby(by_var)[k].agg(['sum']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['sum']).reset_index()
             grp = grp.rename(columns={'sum':'sum_{}'.format(k)})
         elif agg == 'mean':
-            grp = df1.groupby(by_var)[k].agg(['mean']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['mean']).reset_index()
             grp = grp.rename(columns={'mean':'mean_{}'.format(k)})
         elif agg == 'min':
-            grp = df1.groupby(by_var)[k].agg(['min']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['min']).reset_index()
             grp = grp.rename(columns={'min':'min_{}'.format(k)})
         elif agg == 'max':
-            grp = df1.groupby(by_var)[k].agg(['max']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['max']).reset_index()
             grp = grp.rename(columns={'max':'max_{}'.format(k)})
         elif agg == 'median':
-            grp = df1.groupby(by_var)[k].agg(['median']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['median']).reset_index()
             grp = grp.rename(columns={'median':'med_{}'.format(k)})
         elif agg == 'std':
-            grp = df1.groupby(by_var)[k].agg(['std']).reset_index()
+            grp = df1.groupby(by_vars)[k].agg(['std']).reset_index()
             grp = grp.rename(columns={'std':'std_{}'.format(k)})
         elif agg == 'logodds':
-            grp1 = df1.groupby(by_var)[k].agg(['sum']).reset_index()
-            grp2 = df_grp[[by_var,'count']]
-            grp  = grp1.merge(grp2, on=by_var)
+            grp1 = df1.groupby(by_vars)[k].agg(['sum']).reset_index()
+            temp = by_vars + ['count']
+            grp2 = df_grp[temp]
+            grp  = grp1.merge(grp2, on=by_vars)
             grp['ones'] = grp['sum']
             grp['zeros'] = grp['count'] - grp['sum']
             grp['logodds_{}'.format(k)]=np.log(grp['ones']/grp['zeros'])
-            grp = grp[[by_var,'logodds_{}'.format(k)]]
+            temp = by_vars + ['logodds_{}'.format(k)]
+            grp = grp[temp]
         else:
             warnings.warn("Skipping variable {}, invalid aggregation...".format(k))
             continue
@@ -272,7 +277,7 @@ def pivot(df, varlist, by_var):
         int_l, dec_l = precision_and_scale(min(df[k]))
         if agg in ['sum','mean','min','max','median','std']:
             grp = grp.round({grp.columns[1]:dec_l})
-        df_grp = df_grp.merge(grp, on=by_var)
+        df_grp = df_grp.merge(grp, on=by_vars)
     
     return df_grp
             

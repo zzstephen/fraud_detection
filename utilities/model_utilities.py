@@ -20,6 +20,8 @@ from plotly.offline import iplot
 def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, width=400, height=300, show=True, title=None):
 
     #x_trans, y_trans are functions
+
+    
     
     keep_var0 = [x_var, y_var, by_var1, by_var2, color_var]
     keep_var = [i for i in keep_var0 if i]
@@ -34,9 +36,8 @@ def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=
     if title == None:
         title = f"{x_var} vs {y_var}"
     
-    fig = px.scatter(df1, x = 'x_var', y = 'y_var', color = color_var, facet_row=by_var1, facet_col=by_var2, trendline='ols', \
-                     width=width*col_level, height=height*row_level , trendline_color_override="red",
-                     title=title)
+    fig = px.scatter(df1, x = 'x_var', y = 'y_var', color = color_var, facet_row=by_var1, facet_col=by_var2, trendline='ols', 
+                     trendline_color_override="red", title=title)
 
     fig.update_layout(
     xaxis_title=x_var,
