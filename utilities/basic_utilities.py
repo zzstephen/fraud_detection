@@ -8,6 +8,21 @@ import pdb
 
 
 
+def grp_ttest(varlist, df1, df2):
+
+    res = pd.DataFrame(columns = varlist)
+    
+    for i in range(len(varlist)):
+        
+        temp = list(ttest_ind(df1[varlist[i]]))
+
+        res.at['T-statistic',i] = temp[0]
+
+        res.at['P-value',i] = temp[1]
+
+    return res
+
+
 def sort_vars(df, varlist):
     numeric_vars = []
     str_vars = []
