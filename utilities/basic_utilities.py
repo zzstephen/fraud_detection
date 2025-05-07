@@ -5,6 +5,7 @@ import math
 import numpy as np
 import warnings
 import pdb
+from scipy.stats import ttest_ind
 
 
 
@@ -14,11 +15,11 @@ def grp_ttest(varlist, df1, df2):
     
     for i in range(len(varlist)):
         
-        temp = list(ttest_ind(df1[varlist[i]]))
+        temp = list(ttest_ind(df1[varlist[i]], df2[varlist[i]]))
 
-        res.at['T-statistic',i] = temp[0]
+        res.at['T-statistic',varlist[i]] = temp[0]
 
-        res.at['P-value',i] = temp[1]
+        res.at['P-value',varlist[i]] = temp[1]
 
     return res
 
