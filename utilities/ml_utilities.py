@@ -23,6 +23,7 @@ from sklearn.base import BaseEstimator, RegressorMixin
 from statsmodels.tsa.stattools import adfuller
 
 
+
 def getWeights(d, thres):
     w,k = [1.0], 1
     while True:
@@ -148,17 +149,17 @@ class sk_feature_selection:
     
     
     @staticmethod
-    def f_mutual_info(df, x_vars, y_var, ytype = 'continuous', n = 3, random_state=None, corr_network=True):
+    def f_mutual_info(df, cont_vars, disc_vars, y_var, ytype = 'continuous', n = 3, random_state=None, corr_network=True):
         
-        cont_vars = []
-        disc_vars = []
+        # cont_vars = []
+        # disc_vars = []
         
-        for v in x_vars:
-            if df[v].dtype in (int, bool):
-                disc_vars.append(v)
-            elif df[v].dtype == float:
-                cont_vars.append(v)
-        
+        # for v in x_vars:
+        #     if df[v].dtype in (int, bool):
+        #         disc_vars.append(v)
+        #     elif df[v].dtype == float:
+        #         cont_vars.append(v)
+
         cont_mi = pd.DataFrame(columns=['feature','mutual_info'])
         disc_mi = pd.DataFrame(columns=['feature','mutual_info'])
         
@@ -182,8 +183,8 @@ class sk_feature_selection:
         mi = mi.sort_values(by=['mutual_info'], ascending=False).reset_index(drop=True)
         
         if corr_network == True:
-            
-            xy_vars = [y_var] + x_vars
+
+            xy_vars = [y_var] + cont_vars + disc_vars
             
             
             correlation_matrix = df[xy_vars].corr()
@@ -214,7 +215,7 @@ class sk_feature_selection:
             # create tooltip string by concatenating statistics
             description = [f"<b>{node}</b>" +    
                            "<br>mutual info ranking # " + "{}".format(1 if node==y_var else (mi.loc[mi['feature']==node].index.values[0]+1)) +
-                           "<br>correlation with " + "{}: {}".format(y_var, np.round(correlation_matrix[y_var][index],3))
+                           "<br>correlation with " + "{}: {}".format(y_var, np.round(correlation_matrix[y_var].iloc[index],3))
                            for index, node in enumerate(node_label)]
             
             

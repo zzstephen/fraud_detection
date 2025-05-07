@@ -15,6 +15,9 @@ from plotly.subplots import make_subplots
 from patsy import dmatrix, demo_data, ContrastMatrix, Poly
 import plotly.graph_objects as go
 from plotly.offline import iplot
+from scipy.stats import ttest_ind_from_stats
+
+
 
 
 def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, width=400, height=300, show=True, title=None):
@@ -116,5 +119,6 @@ def px_scatter_3d_plot(df, x1_var, x2_var, y_var, width=800, height=600):
     layout = go.Layout(title = '3D scatter plot of {} by {}, {}'.format(y_var, x1_var, x2_var), width=width, height=height)
     fig = go.Figure(data = [trace], layout = layout)
     iplot(fig)
+    return fig
 
 
