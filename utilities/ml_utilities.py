@@ -22,6 +22,16 @@ import statsmodels.api as sm
 from sklearn.base import BaseEstimator, RegressorMixin
 from statsmodels.tsa.stattools import adfuller
 from sklearn.svm import LinearSVC
+from sklearn.metrics import normalized_mutual_info_score
+
+n_cols = len(temp_vars)
+nmi_matrix = np.zeros((n_cols, n_cols))
+
+for i in range(n_cols):
+    for j in range(n_cols):
+        nmi_matrix[i, j] = normalized_mutual_info_score(raw_data[temp_vars[i]], raw_data[temp_vars[j]])
+
+
 
 
 
@@ -112,7 +122,33 @@ class sk_feature_selection:
     
     
 #     def __init__(self):
-    
+
+
+    @staticmethod
+    def f_normalized_mi_matrix(df, varlist):
+        
+        n_cols = len(varlist)
+        nmi_matrix = np.zeros((n_cols, n_cols))
+
+        for i in range(n_cols):
+            for j in range(n_cols):
+                nmi_matrix[i, j] = normalized_mutual_info_score(cv[varlist[i]], cv[varlist[j]])
+        
+
+        matrix = pd.DataFrame(columns = ['feature'] + varlist)
+        
+        matrix['feature'] = varlist
+        
+        for i in range(n_cols):
+            matrix.iloc[i,1:] = nmi_matrix[i]
+
+        return matrix
+
+        
+
+for i in range(n_cols):
+    for j in range(n_cols):
+        nmi_matrix[i, j] = normalized_mutual_info_score(raw_data[temp_vars[i]], raw_data[temp_vars[j]])
         
     @staticmethod    
     def f_low_variation(df, varlist, thres):
