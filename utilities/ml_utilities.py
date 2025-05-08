@@ -144,11 +144,7 @@ class sk_feature_selection:
 
         return matrix
 
-        
 
-for i in range(n_cols):
-    for j in range(n_cols):
-        nmi_matrix[i, j] = normalized_mutual_info_score(raw_data[temp_vars[i]], raw_data[temp_vars[j]])
         
     @staticmethod    
     def f_low_variation(df, varlist, thres):
