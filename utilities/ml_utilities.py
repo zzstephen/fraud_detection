@@ -24,15 +24,6 @@ from statsmodels.tsa.stattools import adfuller
 from sklearn.svm import LinearSVC
 from sklearn.metrics import normalized_mutual_info_score
 
-n_cols = len(temp_vars)
-nmi_matrix = np.zeros((n_cols, n_cols))
-
-for i in range(n_cols):
-    for j in range(n_cols):
-        nmi_matrix[i, j] = normalized_mutual_info_score(raw_data[temp_vars[i]], raw_data[temp_vars[j]])
-
-
-
 
 
 def getWeights(d, thres):
