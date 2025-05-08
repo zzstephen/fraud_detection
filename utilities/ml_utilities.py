@@ -21,6 +21,7 @@ from sklearn import svm
 import statsmodels.api as sm
 from sklearn.base import BaseEstimator, RegressorMixin
 from statsmodels.tsa.stattools import adfuller
+from sklearn.svm import LinearSVC
 
 
 
@@ -306,7 +307,10 @@ class sk_feature_selection:
             coeffs = pd.DataFrame(columns=['feature','linear_SVC','random_forest'])
             clf1 = LinearSVC(C=0.05, penalty='l2', dual=False)
             clf1.fit(df1[x_vars], df1[y_var])
-            coeefs.linear_SVC = clf1.coef_
+
+            coeffs.feature = x_vars
+            
+            coeffs.linear_SVC=clf1.coef_[0].tolist()
             
             
             clf2 = RandomForestClassifier(n_estimators=50, random_state=0)
