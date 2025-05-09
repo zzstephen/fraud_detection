@@ -1,0 +1,19 @@
+payment_type:
+  - 1: 'payment_type:AA, payment_type:AE'
+  - 2: 'payment_type:AB, payment_type:AD'
+  - 3: 'payment_type:AC'
+
+employment_status:
+  - 1: 'employment_status:CA, employment_status:CG'
+  - 2: 'employment_status:CB, employment_status:CD, employment_status:CE, employment_status:CF'
+  - 3: 'employment_status:CC'
+
+housing_status:
+  - 1: 'housing_status:BA'
+  - 2: 'housing_status:BB, housing_status:BC, housing_status:BD, housing_status:BE, housing_status:BF'
+  - 3: 'housing_status:BG'
+
+device_os:
+  - 1: 'device_os:linux, device_os:other'
+  - 2: 'device_os:macintosh, device_os:x11'
+  - 3: 'device_os:windows'
