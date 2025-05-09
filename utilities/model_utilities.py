@@ -78,7 +78,7 @@ def px_bin_plot(df, x_bin_var, y_var, size_var, by_var = None, width=600, height
     
 def f_get_dummies(df, varlist, drop_first=True):
 
-    return pd.get_dummies(df,prefix=varlist, columns=varlist, drop_first=True, prefix_sep=':',dummy_na=True)
+    return pd.get_dummies(df,prefix=varlist, columns=varlist, drop_first=drop_first, prefix_sep=':',dummy_na=True)
 
 
 def f_get_1d_knots(df, varlist, knots_list, overlap=False):
