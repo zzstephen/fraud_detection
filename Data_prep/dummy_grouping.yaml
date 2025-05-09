@@ -1,3 +1,9 @@
+get_dummies:
+  - 'payment_type'
+  - 'employment_status'
+  - 'housing_status'
+  - 'device_os'
+
 payment_type:
   - 1: 'payment_type:AA, payment_type:AE'
   - 2: 'payment_type:AB, payment_type:AD'
