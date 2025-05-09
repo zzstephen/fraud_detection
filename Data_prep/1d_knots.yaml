@@ -1,0 +1,33 @@
+get_knots:
+  - income
+  - name_email_similarity
+  - current_address_months_count
+  - date_of_birth_distinct_emails_4w
+  - credit_risk_score
+  - proposed_credit_limit
+  - session_length_in_minutes
+
+income:
+  - knots: '0.5, 0.8'
+
+name_email_similarity:
+  - knots: '0.4, 0.6, 0.8'
+
+current_address_months_count:
+  - knots: '60, 170, 200'
+
+customer_age:
+  - knots: '40, 45'
+
+date_of_birth_distinct_emails_4w:
+  - knots: '6, 8, 11, 14'
+
+credit_risk_score:
+  - knots: '90, 120, 170'
+
+proposed_credit_limit:
+  - knots: '1500'
+
+session_length_in_minutes:
+  - knots: '3, 7, 14'
+
