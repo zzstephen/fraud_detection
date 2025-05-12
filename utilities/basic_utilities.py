@@ -6,8 +6,18 @@ import numpy as np
 import warnings
 import pdb
 from scipy.stats import ttest_ind
+import yaml
 
 
+
+def read_yaml_file(file_path):
+    with open(file_path, 'r') as file:
+        try:
+            data = yaml.safe_load(file)
+            return data
+        except yaml.YAMLError as e:
+            print(f"Error reading YAML file: {e}")
+            return None
 
 def grp_ttest(varlist, df1, df2):
 
@@ -169,7 +179,7 @@ def catsum_val(df, vars, val, desc_val):
         
         total = df[val].sum()
         df1["{} Pct".format(desc_val)] = df1['{}'.format(desc_val)]/total*100
-        df1["Cum {}".format(desc_val)] = df1["{}".format(dscc_val)].cumsum()
+        df1["Cum {}".format(desc_val)] = df1["{}".format(desc_val)].cumsum()
         df1["Cum {} Pct".format(desc_val)] = df1["{} Pct".format(desc_val)].cumsum()
         df_list.append(df1)
     return df_list
@@ -216,13 +226,16 @@ def cat_wt_avg(df, byvars, wt, val, desc_val):
 def write_tbles(dflist, writer=None, sheetname='sheet1', start_row=2, start_col=2):
     if writer == None:
         writer = pd.ExcelWriter("output.xlsx") 
-        
+
+    end_start_col = start_col
+
     for df in dflist:
-        df.to_excel(writer, index=False, sheet_name = sheetname, \
+        df.to_excel(writer, index=False, sheet_name = sheetname,
             startrow = start_row, startcol = start_col)
         start_row += (2 + df.shape[0])
-    
-    return start_row, start_col + 1 + df.shape[1]
+        end_start_col = max(end_start_col, start_col + 1 + df.shape[1])
+
+    return start_row, end_start_col
 
 
 
@@ -248,7 +261,9 @@ def pivot(df, varlist, by_vars):
             df1 = df[temp].copy(deep=True)
     
         if agg == 'weighted_avg':
-            
+
+            assert 'weight' in df1.columns, 'weight column does not exist'
+
             df1['wt'] = df1[weight]*df1[k]
             
             grp1 = df1.groupby(by_vars)['wt'].agg(['sum']).reset_index()
