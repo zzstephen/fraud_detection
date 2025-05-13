@@ -1,9 +1,7 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from loguru import logger
 import datetime
-
 
 sample_down_rate = 0.1
 
@@ -33,11 +31,11 @@ def main():
 
     logger.info(f'Creating out of time sample')
 
-    out_of_time_sample = raw_data.loc[(raw_data['month']==6)&(raw_data['month']==7)].copy()
+    out_of_time_sample = raw_data.loc[(raw_data['month']==6)|(raw_data['month']==7)].copy()
 
     out_of_time_sample['sample_weight'] = 1
 
-    out_of_time_sample.to_csv(f'{intermediate_data_path}/out_of_time_sample.csv')
+    out_of_time_sample.to_csv(f'{intermediate_data_path}/out_of_time_sample.csv', index=False)
 
     logger.info(f'Out of time dataset saved as {intermediate_data_path}/out_of_time_sample.csv')
 
@@ -57,7 +55,7 @@ def main():
 
     train_test_data = pd.concat([train_test_sample_fraud_1, train_test_sample_fraud_0], axis=0, ignore_index=True)
 
-    train_test_data.to_csv(f'{intermediate_data_path}/train_test_sample.csv')
+    train_test_data.to_csv(f'{intermediate_data_path}/train_test_sample.csv', index=False)
 
     logger.info(f'Training/testing dataset saved as {intermediate_data_path}/train_test_sample.csv')
 
