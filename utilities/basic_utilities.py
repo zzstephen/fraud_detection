@@ -7,6 +7,51 @@ import warnings
 import pdb
 from scipy.stats import ttest_ind
 import yaml
+import csv
+import json
+
+
+def split_file(input_filepath:str, output_fd:str, chunk_size:int, output_prefix:str="chunk"):
+    """
+    Splits a large text file into smaller files of a specified size.
+
+    Args:
+        input_filepath (str): Path to the input text file.
+        output_fd (str): Path to save the chunk files
+        chunk_size (int): Maximum number of lines per chunk.
+        output_prefix (str, optional): Prefix for output file names. Defaults to "chunk".
+    """
+    with open(input_filepath, 'r') as infile:
+        chunk_number = 1
+        lines = infile.readlines()
+        
+        for i in range(0, len(lines), chunk_size):
+            chunk = lines[i:i + chunk_size]
+            output_filepath = f"{output_fd}/{output_prefix}_{chunk_number}.txt"
+            
+            with open(output_filepath, 'w') as outfile:
+                outfile.writelines(chunk)
+            
+            print(f"Chunk {chunk_number} written to {output_filepath}")
+            chunk_number += 1
+
+
+
+def csv_to_txt(csv_filepath, txt_filepath, delimiter=','):
+    with open(csv_filepath, 'r', newline='') as csvfile, open(txt_filepath, 'w') as txtfile:
+        csv_reader = csv.reader(csvfile, delimiter=delimiter)
+        for row in csv_reader:
+            txtfile.write(' '.join(row) + '\n')
+
+
+def csv_to_json(csv_file_path, json_file_path):
+
+    with open(csv_file_path, mode='r', newline='', encoding='utf-8') as csvfile:
+        data = list(csv.DictReader(csvfile))
+    
+    with open(json_file_path, mode='w', encoding='utf-8') as jsonfile:
+        json.dump(data, jsonfile, indent=4)
+
 
 
 
@@ -142,8 +187,6 @@ def cross_tab(df, var1, var2):
 
     return res_freq, res_row_pct, res_col_pct
 
-
-    
 
 def proc_freq(df, vars):
     df_list = list()

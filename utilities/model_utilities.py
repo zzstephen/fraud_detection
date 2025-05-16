@@ -12,7 +12,7 @@ import plotly.io as pio
 pio.renderers.default = "iframe"
 from scipy.interpolate import *
 from plotly.subplots import make_subplots
-from patsy import dmatrix, demo_data, ContrastMatrix, Poly
+from patsy import demo_data, ContrastMatrix, Poly
 import plotly.graph_objects as go
 from plotly.offline import iplot
 from scipy.stats import ttest_ind_from_stats
