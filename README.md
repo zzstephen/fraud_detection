@@ -1,2 +1,2 @@
 # fraud_detection
-some off work stuff using NeurIPS 2022 dataset
+some aplied researc/writing material for later using NeurIPS 2022 dataset. 
