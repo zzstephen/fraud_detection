@@ -305,7 +305,7 @@ def pivot(df, varlist, by_vars):
     
         if agg == 'weighted_avg':
 
-            assert 'weight' in df1.columns, 'weight column does not exist'
+            assert weight in df1.columns, 'weight column does not exist'
 
             df1['wt'] = df1[weight]*df1[k]
             
