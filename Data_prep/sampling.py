@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from loguru import logger
 import datetime
+import pickle
 
 sample_down_rate = 0.1
 
@@ -10,6 +11,9 @@ testing = 0.3
 raw_data_path = '../../../data'
 
 intermediate_data_path = '../../../data/intermediate'
+
+segment_model_path = '../../../model_objects'
+
 
 def main():
 
@@ -27,6 +31,14 @@ def main():
 
     raw_data = pd.read_csv(f'{raw_data_path}/Base.csv')
 
+    with open(f'{segment_model_path}/segment_model.pkl', 'rb') as file:
+
+        seg_model = pickle.load(file)
+
+    raw_data['segment'] = seg_model.predict(raw_data[['credit_risk_score','name_email_similarity']])
+
+    logger.info(f'segmentation created...')
+
     logger.info(f'Raw data size: {raw_data.shape[0]} rows, {raw_data.shape[1]} columns')
 
     logger.info(f'Creating out of time sample')
@@ -40,7 +52,6 @@ def main():
     logger.info(f'Out of time dataset saved as {intermediate_data_path}/out_of_time_sample.csv')
 
     logger.info(f'Done:Creating out of time sample')
-
 
     logger.info(f'Creating training/testing sample')
 
