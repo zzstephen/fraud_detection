@@ -295,8 +295,12 @@ def pivot(df, varlist, by_vars):
         if len(pair) == 2:
             agg = pair[0]
             weight = pair[1]
+            assert weight in df.columns, f'{weight} column does not exist' 
             temp = by_vars + [k, weight]
             df1 = df[temp].copy(deep=True)
+            df1[f'wt_{k}'] = df1[weight]*df1[k]
+            grp1 = df1.groupby(by_vars)[weight].sum().reset_index()
+            grp1 = grp1.rename(columns={weight:'sum_of_weights'})
   
         else:
             agg = pair
@@ -304,18 +308,16 @@ def pivot(df, varlist, by_vars):
             df1 = df[temp].copy(deep=True)
     
         if agg == 'weighted_avg':
-
-            assert weight in df1.columns, 'weight column does not exist'
-
-            df1['wt'] = df1[weight]*df1[k]
             
-            grp1 = df1.groupby(by_vars)['wt'].agg(['sum']).reset_index()
-            grp2 = df1.groupby(by_vars)[weight].agg(['sum']).reset_index()
-            grp2 = grp2.rename(columns={'sum':k})
+            grp2 = df1.groupby(by_vars)[f'wt_{k}'].sum().reset_index()
+            grp2 = grp2.rename(columns={f'wt_{k}':f'sum_of_weighted_{k}'})
+            
             grp = grp1.merge(grp2, on=by_vars)
-            grp['WA_{}'.format(k)] = grp['sum']/grp[k]
+            
+            grp['WA_{}'.format(k)] = grp[f'sum_of_weighted_{k}']/grp['sum_of_weights']
             temp = by_vars + ['WA_{}'.format(k)]
             grp = grp[temp]
+            
         elif agg == 'sum':
             grp = df1.groupby(by_vars)[k].agg(['sum']).reset_index()
             grp = grp.rename(columns={'sum':'sum_{}'.format(k)})
@@ -334,16 +336,27 @@ def pivot(df, varlist, by_vars):
         elif agg == 'std':
             grp = df1.groupby(by_vars)[k].agg(['std']).reset_index()
             grp = grp.rename(columns={'std':'std_{}'.format(k)})
+            
         elif agg == 'logodds':
-            grp1 = df1.groupby(by_vars)[k].agg(['sum']).reset_index()
-            temp = by_vars + ['count']
-            grp2 = df_grp[temp]
-            grp  = grp1.merge(grp2, on=by_vars)
-            grp['ones'] = grp['sum']
-            grp['zeros'] = grp['count'] - grp['sum']
-            grp['logodds_{}'.format(k)]=np.log(grp['ones']/grp['zeros'])
-            temp = by_vars + ['logodds_{}'.format(k)]
-            grp = grp[temp]
+
+            if len(pair) == 2:
+                grp2 = df1.groupby(by_vars)[f'wt_{k}'].sum().reset_index()
+                grp2 = grp2.rename(columns={f'wt_{k}':f'wt_sum_{k}'})
+                grp  = df_grp.merge(grp1, on=by_vars).merge(grp2, on=by_vars)
+                grp['logodds_{}'.format(k)]=np.log(grp[f'wt_sum_{k}']/(grp['sum_of_weights']-grp[f'wt_sum_{k}']))
+                temp = by_vars + ['logodds_{}'.format(k)]
+                grp = grp[temp]
+
+            else:
+                grp2 = df1.groupby(by_vars)[k].agg(['sum']).reset_index()
+                temp = by_vars + ['count']
+                grp3 = df_grp[temp]
+                grp  = grp2.merge(grp3, on=by_vars)
+                grp['logodds_{}'.format(k)]=np.log(grp['sum']/(grp['count'] - grp['sum']))
+                temp = by_vars + ['logodds_{}'.format(k)]
+                grp = grp[temp]
+
+            
         else:
             warnings.warn("Skipping variable {}, invalid aggregation...".format(k))
             continue
