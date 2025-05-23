@@ -123,7 +123,7 @@ class sk_feature_selection:
 
         for i in range(n_cols):
             for j in range(n_cols):
-                nmi_matrix[i, j] = normalized_mutual_info_score(cv[varlist[i]], cv[varlist[j]])
+                nmi_matrix[i, j] = normalized_mutual_info_score(df[varlist[i]], df[varlist[j]])
         
 
         matrix = pd.DataFrame(columns = ['feature'] + varlist)
