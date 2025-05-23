@@ -16,16 +16,38 @@ from patsy import demo_data, ContrastMatrix, Poly
 import plotly.graph_objects as go
 from plotly.offline import iplot
 from scipy.stats import ttest_ind_from_stats
+from scipy.interpolate import splrep, splev
 
 
+def px_interpolate(df, x_var, y_var, s=0.5, k=1, show=True):
+
+    fig = go.Figure()
+
+    tck = splrep(df[x_var], df[y_var], s=s, k=1)
+
+    y_smooth = splev(df[x_var], tck)
+
+    knots = tck[0]
+
+    fig.add_trace(go.Scatter(x=df[x_var], y=df[y_var], mode='markers', name='Scatter Data'))
+
+    fig.add_trace(go.Scatter(x=df[x_var], y=y_smooth, mode='lines', name='Interpolation'))
+
+    fig.update_layout(
+    title="Interpolation and knots",
+    xaxis_title=x_var,
+    yaxis_title=y_var)
+
+    if show:
+        fig.show()
+
+    return fig, knots
 
 
-def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, width=400, height=300, show=True, title=None):
+def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=None, x_trans = None, y_trans = None, 
+                    width=400, height=300, show=True, title=None):
 
     #x_trans, y_trans are functions
-
-    
-    
     keep_var0 = [x_var, y_var, by_var1, by_var2, color_var]
     keep_var = [i for i in keep_var0 if i]
     df1 = df[keep_var].copy(deep=True)
@@ -48,8 +70,9 @@ def px_scatter_plot(df, x_var, y_var, by_var1 = None, by_var2 = None, color_var=
 
     if show:
         fig.show()
-        
+
     return fig
+    
     
 def px_ecdf_plot(df, x_var, cat_var = None, by_var = None, width=600, height=450):
 
@@ -79,6 +102,8 @@ def px_bin_plot(df, x_bin_var, y_var, size_var, by_var = None, width=600, height
 def f_get_dummies(df, varlist, drop_first=True):
 
     return pd.get_dummies(df,prefix=varlist, columns=varlist, drop_first=drop_first, prefix_sep=':',dummy_na=True)
+
+
 
 
 def f_get_1d_knots(df, varlist, knots_list, overlap=False):
