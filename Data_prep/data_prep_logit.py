@@ -6,14 +6,8 @@ import sys
 sys.path.append('../utilities')
 from basic_utilities import *
 from model_utilities import *
+from data_config import *
 
-intermediate_data_path = '../../../data/intermediate'
-
-processed_data_path = '../../../data/processed_data'
-
-dummy_grouping = 'dummy_grouping.yaml'
-
-knots_1d = 'knots_1d.yaml'
 
 def main():
 
@@ -23,7 +17,15 @@ def main():
 
     logger.info('creating features from intermediate datasets')
 
-    train_test_data = create_data(pd.read_csv(f'{intermediate_data_path}/train_test_sample.csv'))
+    train_test_data = pd.DataFrame()
+
+    input_train_test_data = pd.read_csv(f'{intermediate_data_path}/train_test_sample.csv')
+
+
+    for key in segments:
+
+        train_test_data = pd.concat([train_test_data, create_data(input_train_test_data.loc[input_train_test_data['segment']==key], cleanup_intermediate=False,
+                                                                  dummy_grouping=f'dummy_grouping_segment{key}', knots_1d=f'1d_knots_segment{key}')],axis=0, ignore_index=True)
 
     train_test_data.to_csv(f'{processed_data_path}/train_test_sample.csv', index=False)
 
@@ -31,14 +33,21 @@ def main():
 
     logger.info('creating features for out of time sample')
 
-    out_of_time_data = create_data(pd.read_csv(f'{intermediate_data_path}/out_of_time_sample.csv'))
+    out_of_time_data = pd.DataFrame()
+
+    input_out_of_time_data = create_data(pd.read_csv(f'{intermediate_data_path}/out_of_time_sample.csv'))
+
+    for key in knots_1d.keys():
+
+        out_of_time_data = pd.concat([out_of_time_data, create_data(input_out_of_time_data.loc[input_out_of_time_data['segment']==key], cleanup_intermediate=False,
+                                                                  dummy_grouping=f'dummy_grouping_segment{key}', knots_1d=f'1d_knots_segment{key}')],axis=0, ignore_index=True)
 
     out_of_time_data.to_csv(f'{processed_data_path}/out_of_time_data.csv', index=False)
 
     logger.info(f'saving data to {processed_data_path}/out_of_time_sample.csv')
 
 
-def create_data(df, cleanup_intermediate=False):
+def create_data(df:pd.DataFrame, cleanup_intermediate:bool=False, dummy_grouping:str='', knots_1d:str=''):
 
     df1 = df.copy()
 
@@ -68,9 +77,8 @@ def create_data(df, cleanup_intermediate=False):
 
     varlist = {}
     for key in yml_file['get_knots']:
-        knots = yml_file[key][0]['knots'].split(',')
-        knots = [float(x) for x in knots]
-        varlist[key] = knots
+        temp = yml_file[key].split(',')
+        varlist[key] = [float(t) for t in temp]
 
     df1 = f_get_1d_knots(df1, varlist.keys(), varlist)
 

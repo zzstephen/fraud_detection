@@ -3,16 +3,9 @@ import pandas as pd
 from loguru import logger
 import datetime
 import pickle
+from data_config import *
 
-sample_down_rate = 0.1
 
-testing = 0.3
-
-raw_data_path = '../../../data'
-
-intermediate_data_path = '../../../data/intermediate'
-
-segment_model_path = '../../../model_objects'
 
 
 def main():
@@ -23,7 +16,7 @@ def main():
 
     logger.info(f'sample_down_rate: {sample_down_rate}')
 
-    logger.info(f'testing rate: {testing}')
+    # logger.info(f'testing rate: {testing}')
 
     logger.info(f'raw_data_path, {raw_data_path}')
 
@@ -69,6 +62,8 @@ def main():
     train_test_data.to_csv(f'{intermediate_data_path}/train_test_sample.csv', index=False)
 
     logger.info(f'Training/testing dataset saved as {intermediate_data_path}/train_test_sample.csv')
+
+
 
     logger.info(f'Done:Creating training/testing sample')
 
