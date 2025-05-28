@@ -23,6 +23,8 @@ from sklearn.base import BaseEstimator, RegressorMixin
 from statsmodels.tsa.stattools import adfuller
 from sklearn.svm import LinearSVC
 from sklearn.metrics import normalized_mutual_info_score
+from xgbfir import *
+from xgboost import *
 
 
 
@@ -115,8 +117,11 @@ class sk_feature_selection:
 #     def __init__(self):
 
 
+
+
+
     @staticmethod
-    def f_normalized_mi_matrix(df, varlist):
+    def f_normalized_mi_matrix(df:pd.DataFrame, varlist:list):
         
         n_cols = len(varlist)
         nmi_matrix = np.zeros((n_cols, n_cols))
@@ -138,7 +143,7 @@ class sk_feature_selection:
 
         
     @staticmethod    
-    def f_low_variation(df, varlist, thres):
+    def f_low_variation(df:pd.DataFrame, varlist:list, thres:float):
         
         var_std = pd.DataFrame(columns = ['feature','rescaled_std','recommendation','outliers'])
 
@@ -173,7 +178,7 @@ class sk_feature_selection:
     
     
     @staticmethod
-    def f_mutual_info(df, cont_vars, disc_vars, y_var, ytype = 'continuous', n = 3, random_state=None, corr_network=True):
+    def f_mutual_info(df:pd.DataFrame, cont_vars:list, disc_vars:list, y_var:str, ytype:str = 'continuous', n:int = 3, random_state:int=123, corr_network:bool=True):
         
         # cont_vars = []
         # disc_vars = []
@@ -294,10 +299,35 @@ class sk_feature_selection:
         return mi
         
     
-    
-    
+
+
     @staticmethod
-    def f_feature_select(df, x_vars, y_var, mtype='regression', chart='off'):
+    def f_get_interaction_select(df:pd.DataFrame, x_vars:list, y_var:str, mtype:str='regression', order:int=2, base_margin=None):
+
+        assert mtype in ['regression','classification'], 'mtype must be classification or regression'
+
+        if mtype == 'regression':
+
+            clf = XGBRegressor(objective ='reg:linear',
+                               colsample_by = 0.7, subsample= 0.7,
+                               num_parallel_tree=100, num_boost_round=1, seed = 123, n_jobs=-1)
+
+        else:
+
+            clf = XGBClassifier(objective ='binary:logistic',
+                               colsample_by = 0.7, subsample= 0.7,
+                               num_parallel_tree=100, num_boost_round=1, seed = 123, n_jobs=-1)
+
+        if base_margin != None:
+            clf.fit(df[x_vars], df[y_var], base_margin = base_margin)
+        else:
+            clf.fit(df[x_vars], df[y_var])
+
+        saveXgbFI(clf, feature_names=x_vars, OutputXlsxFile='feature_interactions.xlsx', MaxTrees=100, MaxInteractionDepth=order-1)
+
+
+    @staticmethod
+    def f_feature_select(df:pd.DataFrame, x_vars:list, y_var:str, mtype:str='regression', chart:str='off'):
         
         df1 = df.copy()
         
