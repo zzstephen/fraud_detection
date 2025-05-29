@@ -77,7 +77,7 @@ def create_data(df:pd.DataFrame, cleanup_intermediate:bool=False, dummy_grouping
     varlist = {}
     for key in yml_file['get_knots']:
         temp = yml_file[key].split(',')
-        varlist[key] = [float(t) for t in temp]
+        varlist[key] = [float(t.replace("−", "-")) for t in temp]
 
     df1 = f_get_1d_knots(df1, varlist.keys(), varlist)
 

@@ -1,0 +1,42 @@
+floors:
+ - income,0
+ - name_email_similarity,0
+ - prev_address_months_count,0
+ - current_address_months_count,0
+ - customer_age,12
+ - prev_address_months_count,0
+ - days_since_request,0
+ - intended_balcon_amount,0
+ - zip_count_4w,1
+ - velocity_6h,-211
+ - velocity_24h,1329
+ - velocity_4w,2779
+ - bank_branch_count_8w,0
+ - date_of_birth_distinct_emails_4w,0
+ - credit_risk_score,-176
+ - bank_months_count,0
+ - proposed_credit_limit,200
+ - session_length_in_minutes,0
+ - device_distinct_emails_8w,0
+
+caps:
+  - income,1
+  - name_email_similarity,1
+  - prev_address_months_count,380
+  - current_address_months_count,406
+  - customer_age,12
+  - prev_address_months_count,0
+  - days_since_request,78
+  - intended_balcon_amount,108
+  - zip_count_4w,5767
+  - velocity_6h,24763
+  - velocity_24h,9527
+  - velocity_4w,7043
+  - bank_branch_count_8w,2521
+  - date_of_birth_distinct_emails_4w,42
+  - credit_risk_score,387
+  - bank_months_count,31
+  - proposed_credit_limit,2000
+  - session_length_in_minutes,107
+  - device_distinct_emails_8w,3
+
