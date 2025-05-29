@@ -302,9 +302,20 @@ class sk_feature_selection:
 
 
     @staticmethod
-    def f_get_interaction_select(df:pd.DataFrame, x_vars:list, y_var:str, mtype:str='regression', order:int=2, base_margin=None):
+    def f_get_interaction_select(df:pd.DataFrame, x_vars:list, y_var:str, mtype:str='regression', order:int=2, weight:str=None, out_file:str = '', base_margin=None):
 
         assert mtype in ['regression','classification'], 'mtype must be classification or regression'
+
+        df1 = df.copy()
+
+        if weight == None:
+            df1['sample_weight'] = 1
+            weight = 'sample_weight'
+        else:
+            assert weight in df.columns, f'{weight} does not exist in the columns'
+
+        if out_file == '':
+            out_file = f'{mtype}_feature_interactions_order{order}.xlsx'
 
         if mtype == 'regression':
 
@@ -319,11 +330,11 @@ class sk_feature_selection:
                                num_parallel_tree=100, num_boost_round=1, seed = 123, n_jobs=-1)
 
         if base_margin != None:
-            clf.fit(df[x_vars], df[y_var], base_margin = base_margin)
+            clf.fit(df1[x_vars], df1[y_var], base_margin = base_margin, sample_weight=df1[weight])
         else:
-            clf.fit(df[x_vars], df[y_var])
+            clf.fit(df1[x_vars], df1[y_var], sample_weight=df1[weight])
 
-        saveXgbFI(clf, feature_names=x_vars, OutputXlsxFile='feature_interactions.xlsx', MaxTrees=100, MaxInteractionDepth=order-1)
+        saveXgbFI(clf, feature_names=x_vars, OutputXlsxFile=out_file, MaxTrees=100, MaxInteractionDepth=order-1)
 
 
     @staticmethod
