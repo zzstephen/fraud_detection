@@ -1,0 +1,18 @@
+spline_features_segment0:
+- velocity_24h
+- velocity_4w
+- intended_balcon_amount
+
+spline_features_segment1:
+- zip_count_4w
+- velocity_6h
+- velocity_24h
+- velocity_4w
+- bank_branch_count_8w
+
+spline_features_segment2:
+- zip_count_4w
+- velocity_6h
+- velocity_24h
+- velocity_4w
+- intended_balcon_amount

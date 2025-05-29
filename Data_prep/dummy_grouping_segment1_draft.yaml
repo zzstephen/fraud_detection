@@ -1,0 +1,32 @@
+get_dummies:
+- payment_type
+- employment_status
+- housing_status
+- device_os
+- device_distinct_emails_8w
+payment_type:
+- 0,payment_type:AC
+- 1,payment_type:AB
+- 2,payment_type:AD
+employment_status:
+- 0,employment_status:CE
+- 1,employment_status:CC
+- 2,employment_status:CG
+- 3,employment_status:CF
+- 4,employment_status:CB
+- 5,employment_status:CD
+housing_status:
+- 0,housing_status:BE
+- 1,housing_status:BG
+- 2,housing_status:BD
+- 3,housing_status:BB
+- 4,housing_status:BF
+- 5,housing_status:BC
+device_os:
+- 0,device_os:windows
+- 1,device_os:x11
+- 2,device_os:macintosh
+- 3,device_os:other
+device_distinct_emails_8w:
+- 0,device_distinct_emails_8w:2.0
+- 1,device_distinct_emails_8w:1.0

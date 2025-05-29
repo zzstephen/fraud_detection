@@ -1,0 +1,18 @@
+binning_features_segment0:
+  - bank_branch_count_8w,2
+  - days_since_request,2
+  - device_distinct_emails_8w,2
+
+binning_features_segment1:
+  - name_email_similarity,3
+  - days_since_request,2
+  - intended_balcon_amount,3
+  - credit_risk_score,3
+  - session_length_in_minutes,2
+
+binning_features_segment2:
+  - days_since_request,2
+  - bank_branch_count_8w,2
+  - credit_risk_score,3
+  - bank_months_count,3
+  - session_length_in_minutes,2
