@@ -1,0 +1,6 @@
+binning_features:
+  - name_email_similarity,3
+  - days_since_request,2
+  - intended_balcon_amount,3
+  - credit_risk_score,3
+  - session_length_in_minutes,2

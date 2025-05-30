@@ -26,9 +26,14 @@ knots_1d['segment0']= '1d_knots_segment0.yaml'
 knots_1d['segment1']= '1d_knots_segment1.yaml'
 knots_1d['segment2']= '1d_knots_segment2.yaml'
 
+binning_feature = {}
+
+binning_feature['segment0']= 'binning_features_segment0.yaml'
+binning_feature['segment1']= 'binning_features_segment1.yaml'
+binning_feature['segment2']= 'binning_features_segment2.yaml'
 
 
-
+cap_n_floor = 'cap_n_floor.yaml'
 
 
 
