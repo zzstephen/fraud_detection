@@ -24,23 +24,28 @@ def main():
 
     yml_file = read_yaml_file(cap_n_floor)
 
-    #rule based goes here
 
-
-
-    logger.info('creating data issue lable for train/test sample')
+    logger.info('creating missing label and capping for train/test sample')
 
     floors = yml_file['floors']
 
     for floor in floors:
         temp = floor.split(',')
-        input_train_test_data[f'{temp[0]}_issue'] = input_train_test_data[temp[0]].apply(lambda x: 'missing' if x < int(temp[1]) else 'N/A')
+        input_train_test_data[f'{temp[0]}_missing'] = input_train_test_data[temp[0]].apply(lambda x: True if x < float(temp[1]) else False)
+        input_train_test_data.loc[input_train_test_data[f'{temp[0]}_missing']==True, temp[0]] = 0
 
     caps = yml_file['caps']
 
     for cap in caps:
         temp = cap.split(',')
-        input_train_test_data[f'{temp[0]}_issue'] = input_train_test_data.apply(lambda x: x[f'{temp[0]}_issue'] + '|Outlier' if x[temp[0]]  > int(temp[1]) else x[f'{temp[0]}_issue'], axis=1)
+        input_train_test_data[f'{temp[0]}_outlier'] = input_train_test_data[temp[0]].apply(lambda x: True if x > float(temp[1]) else False)
+        input_train_test_data.loc[input_train_test_data[f'{temp[0]}_outlier']==True,f'{temp[0]}'] = float(temp[1])
+
+    for floor in floors:
+        temp = floor.split(',')
+        input_train_test_data[f'{temp[0]}'] = input_train_test_data.loc[
+            input_train_test_data[f'{temp[0]}_missing'] == True, temp[0]] = input_train_test_data[f'{temp[0]}'].mean()
+
 
     for key in segments:
 
@@ -104,6 +109,9 @@ def create_data(df:pd.DataFrame, cleanup_intermediate:bool=False, dummy_grouping
         for level in var_grouping:
 
             items = level.split(',')
+
+            if var ==  'device_distinct_emails_8w':
+                print('stop')
 
             df1[f'{var}_{items[0]}'] = 0
 
