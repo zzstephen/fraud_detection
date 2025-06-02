@@ -4,7 +4,9 @@ from loguru import logger
 import datetime
 import pickle
 from data_config import *
-
+import sys
+sys.path.append('../utilities')
+from basic_utilities import *
 
 
 
@@ -23,6 +25,22 @@ def main():
     logger.info('Reading in raw data...')
 
     raw_data = pd.read_csv(f'{raw_data_path}/Base.csv')
+
+    logger.info(f'Raw data shape: row={raw_data.shape[0]}, column={raw_data.shape[1]}')
+
+    logger.info('Dealing with missing values')
+
+    cap_n_floor = read_yaml_file('cap_n_floor.yaml')
+
+    floors = cap_n_floor['floors']
+
+    for floor in floors:
+        temp = floor.split(',')
+        raw_data[temp[0]] = raw_data[temp[0]].apply(lambda x: np.nan if x < float(temp[1]) else x)
+
+    raw_data = raw_data.drop(columns=['prev_address_months_count','intended_balcon_amount','bank_months_count']).dropna()
+
+    logger.info(f'After missing value treatment: row={raw_data.shape[0]}, column={raw_data.shape[1]}')
 
     with open(f'{segment_model_path}/segment_model.pkl', 'rb') as file:
 

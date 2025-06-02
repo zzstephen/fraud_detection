@@ -2,5 +2,4 @@ binning_features:
   - days_since_request,2
   - bank_branch_count_8w,2
   - credit_risk_score,3
-  - bank_months_count,3
   - session_length_in_minutes,2

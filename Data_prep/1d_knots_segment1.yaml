@@ -1,11 +1,9 @@
 get_knots:
 - income
 - name_email_similarity
-- prev_address_months_count
 - current_address_months_count
 - customer_age
 - days_since_request
-- intended_balcon_amount
 - zip_count_4w
 - velocity_6h
 - velocity_24h
@@ -13,16 +11,13 @@ get_knots:
 - bank_branch_count_8w
 - date_of_birth_distinct_emails_4w
 - credit_risk_score
-- bank_months_count
 - proposed_credit_limit
 - session_length_in_minutes
 income: 0,0.3,0.5,0.8,1
 name_email_similarity: 0, 1
-prev_address_months_count: 0.0, 380
 current_address_months_count: 0, 100,406
 customer_age: 12,19.0,19.0,62.0,62.0,120
 days_since_request: 0,78
-intended_balcon_amount: 0,108
 zip_count_4w: 1,5767
 velocity_6h: -211,24763
 velocity_24h: 1329,9527
@@ -30,6 +25,5 @@ velocity_4w: 2779,7043
 bank_branch_count_8w: 0,2521
 date_of_birth_distinct_emails_4w: 0,6,13,15.42
 credit_risk_score: -176,387
-bank_months_count: 0,10,15,18,31
 proposed_credit_limit: 200,981.0,2000
 session_length_in_minutes: 0,107
