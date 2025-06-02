@@ -157,13 +157,15 @@ def proc_means(df, myvars):
     
     row.loc[0, 'Statistics'] = 'missing_count'
     for var in myvars:
-        row.loc[0, var] = df1[var].isna().sum()
+        row.loc[0, var] = df[var].isna().sum()
+        df1.loc[df1['Statistics'] == 'count', var] += row.loc[0, var]
     
     df1 = pd.concat([df1,row], ignore_index=True)
+
     
     row.loc[0,'Statistics'] = 'missing_pct'
     for var in myvars:
-        row.loc[0,var] = df1[var].isna().sum()/df1.loc[df1['Statistics']=='count', var][0]*100
+        row.loc[0,var] = df[var].isna().sum()/df1.loc[df1['Statistics']=='count', var][0]*100
     
     df1 = pd.concat([df1, row], ignore_index=True)
     
