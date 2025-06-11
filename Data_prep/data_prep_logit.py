@@ -120,13 +120,14 @@ def create_data(df:pd.DataFrame, cleanup_intermediate:bool=False, dummy_grouping
     varlist = {}
     for f in features:
         temp = f.split(',')
-        cutpoints = feature_engineering.auto_binning(df1, temp[0],'fraud_bool', int(temp[1]), mtype='classification', class_weight={0:1,1:(1/sample_down_rate)})
+        cutpoints = feature_engineering.auto_binning(df1, temp[0],'fraud_bool', int(temp[1]), mtype='classification', weight={0:1,1:(1/sample_down_rate)})
         varlist[temp[0]] = cutpoints
 
     df1, cps = utilities.binning_c(df1, varlist, labels=False)
 
     pd.DataFrame.from_dict(cps, orient='index').to_csv(binning_features.replace('yaml','csv'))
 
+    df1 = feature_engineering.f_get_dummies(df1, [f'{var}_bin' for var in varlist.keys()], drop_first=True)
 
     if cleanup_intermediate:
 
