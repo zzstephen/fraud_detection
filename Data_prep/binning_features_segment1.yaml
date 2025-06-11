@@ -3,3 +3,6 @@ binning_features:
   - days_since_request,2
   - credit_risk_score,3
   - session_length_in_minutes,2
+  - zip_count_4w,3
+  - velocity_4w,3
+  - bank_branch_count_8w,2

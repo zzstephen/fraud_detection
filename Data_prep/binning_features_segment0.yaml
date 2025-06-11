@@ -1,3 +1,4 @@
 binning_features:
   - bank_branch_count_8w,2
   - days_since_request,2
+  - session_length_in_minutes,3
