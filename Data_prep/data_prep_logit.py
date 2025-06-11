@@ -7,8 +7,9 @@ sys.path.append('../utilities')
 from basic_utilities import *
 from model_utilities import *
 from data_config import *
-sys.path.append('../../../../infrastructure/utilities')
-from ml_tools import feature_engineer
+sys.path.append('../../../../infrastructure/tools')
+from feature_engineering import feature_engineering
+from utilities import utilities
 
 def main():
 
@@ -51,7 +52,7 @@ def main():
 
     input_out_of_time_data = pd.read_csv(f'{intermediate_data_path}/out_of_time_sample.csv')
 
-    yml_file = read_yaml_file(cap_n_floor)
+    # yml_file = read_yaml_file(cap_n_floor)
 
     #rule based goes here
 
@@ -119,10 +120,10 @@ def create_data(df:pd.DataFrame, cleanup_intermediate:bool=False, dummy_grouping
     varlist = {}
     for f in features:
         temp = f.split(',')
-        cutpoints = feature_engineer.auto_binning(df1, temp[0],'fraud_bool', int(temp[1]), mtype='classification', class_weight={0:1,1:(1/sample_down_rate)})
+        cutpoints = feature_engineering.auto_binning(df1, temp[0],'fraud_bool', int(temp[1]), mtype='classification', class_weight={0:1,1:(1/sample_down_rate)})
         varlist[temp[0]] = cutpoints
 
-    df1, cps = binning_c(df1, varlist)
+    df1, cps = utilities.binning_c(df1, varlist, labels=False)
 
     pd.DataFrame.from_dict(cps, orient='index').to_csv(binning_features.replace('yaml','csv'))
 
